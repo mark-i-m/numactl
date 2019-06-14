@@ -35,6 +35,10 @@ enum {
 #define MADV_NOHUGEPAGE 15
 #endif
 
+#ifndef MCL_ONFAULT
+#define MCL_ONFAULT 4
+#endif
+
 int repeat = 1;
 
 void usage(void)
