@@ -72,6 +72,7 @@ int main(int ac, char **av)
 	int i;
 	int fd = -1;
 	bool disable_hugepage = false;
+    bool enable_pinning = false;
 
 	nodes = numa_allocate_nodemask();
 	gnodes = numa_allocate_nodemask();
@@ -89,6 +90,8 @@ int main(int ac, char **av)
 		case 'H':
 			disable_hugepage = true;
 			break;
+        case 'p':
+            enable_pinning = true;
 		default:	
 			usage();
 		}
@@ -125,6 +128,12 @@ int main(int ac, char **av)
 
 	if (disable_hugepage)
 		madvise(map, length, MADV_NOHUGEPAGE);
+
+    if (enable_pinning) {
+        if (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0) {
+            terr("mlockall");
+        }
+    }
 	
 	gpolicy = -1;
 	if (get_mempolicy(&gpolicy, gnodes->maskp, gnodes->size, map, MPOL_F_ADDR) < 0)
