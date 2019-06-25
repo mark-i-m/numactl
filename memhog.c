@@ -52,7 +52,7 @@ void usage(void)
 
 long length;
 
-void hog(void *map)
+void hog(void *map, bool data_obliv)
 {
 	long i;
 	for (i = 0;  i < length; i += UNIT) {
@@ -61,7 +61,7 @@ void hog(void *map)
 			left = UNIT;
 		putchar('.');
 		fflush(stdout);
-		memset(map + i, 0xff, left);
+		memset(map + i, data_obliv ? 0x00 : 0xff, left);
 	}
 	putchar('\n');
 }
@@ -77,6 +77,7 @@ int main(int ac, char **av)
 	int fd = -1;
 	bool disable_hugepage = false;
     bool enable_pinning = false;
+    bool data_obliv = false;
 
 	nodes = numa_allocate_nodemask();
 	gnodes = numa_allocate_nodemask();
@@ -96,6 +97,10 @@ int main(int ac, char **av)
 			break;
         case 'p':
             enable_pinning = true;
+			break;
+        case 'o':
+            data_obliv = true;
+			break;
 		default:	
 			usage();
 		}
@@ -153,6 +158,6 @@ int main(int ac, char **av)
 	}
 
 	for (i = 0; i < repeat; i++)
-		hog(map);
+		hog(map, data_obliv);
 	exit(ret);
 }
