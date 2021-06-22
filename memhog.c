@@ -157,7 +157,7 @@ int main(int ac, char **av)
 		ret = 1;
 	}
 
-	for (i = 0; i < repeat; i++)
+	for (i = 0; repeat == 0 || i < repeat; i++)
 		hog(map, data_obliv);
 	exit(ret);
 }
